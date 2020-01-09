@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <!-- Html Head Tag-->
+  <head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content>
+  <meta name="author" content="五更黑喵">
+  <!-- Open Graph Data -->
+  <meta property="og:title" content="使用docker+wordpress搭建博客">
+  <meta property="og:description" content="一只萌新前端">
+  <meta property="og:site_name" content="五更黑喵">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="http://llllm.github.io">
+  
+    <link rel="alternate" href="/atom.xml" title="五更黑喵" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+
+  <!-- Site Title -->
+  <title>五更黑喵</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <!-- Custom CSS -->
+  
+  <link rel="stylesheet" href="/css/style.light.css">
+
+  <!-- Google Analytics -->
+  
+
+</head>
+
+  <body>
+    <!-- Page Header -->
+
+
+<header class="site-header header-background" style="background-image: url(/img/default-banner-dark.jpg)">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="page-title with-background-image">
+          <p class="title">使用docker+wordpress搭建博客</p>
+          <p class="subtitle"></p>
+        </div>
+        <div class="site-menu with-background-image">
+          <ul>
+            
+              <li>
+                <a href="/">
+                  
+                  Home
+                  
+                </a>
+              </li>
+            
+              <li>
+                <a href="/archives">
+                  
+                  Archives
+                  
+                </a>
+              </li>
+            
+              <li>
+                <a href="https://github.com/llllm">
+                  
+                  Github
+                  
+                </a>
+              </li>
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<article>
+  <div class="container typo">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="post-info text-muted">
+          
+            <!-- Author -->
+            <span class="author info">By 五更黑喵</span>
+          
+          <!-- Date -->
+          <span class="date-time info">On
+            <span class="date">2019-12-08</span>
+            <span class="time">23:30:57</span>
+          </span>
+          
+          <!--  Categories  -->
+            <span class="categories info">Under 
+
+<a href="/categories/docker/">docker</a>
+</span>
+          
+        </div>
+        <!-- Tags -->
+        
+          <div class="post-tags text-muted">
+            Tags: 
+
+<a class="tag" href="/tags/docker/">#docker</a> <a class="tag" href="/tags/wordpress/">#wordpress</a>
+
+
+          </div>
+        
+        <!-- creat toc -->
+        <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#需要的镜像"><span class="post-toc-text">需要的镜像</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#mysql容器"><span class="post-toc-text">mysql容器</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#wordpress容器"><span class="post-toc-text">wordpress容器</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#nginx容器"><span class="post-toc-text">nginx容器</span></a></li></ol>
+        <!-- Post Main Content -->
+        <div class="post-content">
+          <p>本文简单介绍在docker环境下搭建一个wordpress博客<br><a id="more"></a></p>
+<h2 id="需要的镜像"><a href="#需要的镜像" class="headerlink" title="需要的镜像"></a>需要的镜像</h2><p>mysql镜像、wordpress镜像和nginx镜像</p>
+<h2 id="mysql容器"><a href="#mysql容器" class="headerlink" title="mysql容器"></a>mysql容器</h2><p>如果不需要运行一个独立公共的mysql环境可以省略这一步。<br>1.端口的映射<br>2.卷的挂载<br>3.容器环境变量中root账户密码的配置<br>mysql的配置很多,但必要的就这三个，详细建议参考dockerHub mysql文档，以下是一个简单的yaml配置可以作为参考。<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">mysql:</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">xxxx/mysql:5.7</span> 		<span class="string">//镜像</span></span><br><span class="line">  <span class="attr">privileged:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="number">3306</span><span class="string">:3306</span>		<span class="string">//端口映射</span></span><br><span class="line">  <span class="attr">expose:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">'33060'</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">/var/lib/docker/volumes/xxxxx/:/var/lib/mysql</span>		<span class="string">//挂载卷</span></span><br><span class="line">  <span class="attr">environment:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">MYSQL_ROOT_PASSWORD=XXXXX</span>		<span class="string">//root账户初始密码</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="wordpress容器"><a href="#wordpress容器" class="headerlink" title="wordpress容器"></a>wordpress容器</h2><p>1.映射端口<br>2.挂载卷<br>3.配置数据库连接<br>详细建议参考dockerHub wordpress文档，以下是一个简单的yaml配置可以作为参考。<br><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">blog_l:</span></span><br><span class="line">  <span class="attr">image:</span> <span class="string">xxxx/wordpress:latest</span></span><br><span class="line">  <span class="attr">privileged:</span> <span class="literal">false</span></span><br><span class="line">  <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="number">8080</span><span class="string">:80</span></span><br><span class="line">  <span class="attr">volumes:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">/var/lib/docker/volumes/xxxx/:/var/www/html</span></span><br><span class="line">  <span class="attr">environment:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">WORDPRESS_DB_HOST=x.x.x.x:3306</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">WORDPRESS_DB_USER=root</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">WORDPRESS_DB_PASSWORD=xxxxxxx</span></span><br></pre></td></tr></table></figure></p>
+<p>如果需要进行域名的自动适配可以修改wp-config.php文件，如下配置。<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">define(<span class="string">'WP_HOME'</span>, <span class="string">'http://'</span>.$_SERVER[<span class="string">'HTTP_HOST'</span>].<span class="string">'/'</span>);</span><br><span class="line">define(<span class="string">'WP_SITEURL'</span>, <span class="string">'http://'</span>.$_SERVER[<span class="string">'HTTP_HOST'</span>].<span class="string">'/'</span>);</span><br></pre></td></tr></table></figure></p>
+<h2 id="nginx容器"><a href="#nginx容器" class="headerlink" title="nginx容器"></a>nginx容器</h2><p>很多时候我们需要对博客服务反向代理到80端口<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">	<span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span> xxxxx;</span><br><span class="line">    <span class="attribute">location</span> / &#123;</span><br><span class="line">    	<span class="attribute">proxy_pass</span> http://x.x.x.x:8080;</span><br><span class="line">    	<span class="attribute">proxy_redirect</span>     <span class="literal">off</span>;</span><br><span class="line">    	<span class="attribute">proxy_set_header</span>   Host             <span class="variable">$host</span>;</span><br><span class="line">    	<span class="attribute">proxy_set_header</span>   X-Real-IP        <span class="variable">$remote_addr</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</article>
+
+
+
+    <!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <p class="copyright text-muted">
+          Theme By <a target="_blank" href="https://github.com/levblanc">Levblanc.</a>
+          <!-- Inspired By <a target="_blank" href="https://github.com/klugjo/hexo-theme-clean-blog">Clean Blog.</a> -->
+        <p class="copyright text-muted">
+          Powered By <a target="_blank" href="https://hexo.io/">Hexo.</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+    <!-- After Footer Scripts -->
+<script src="/js/highlight.pack.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    var codeBlocks = Array.prototype.slice.call(document.getElementsByTagName('pre'))
+    codeBlocks.forEach(function(block, index) {
+      hljs.highlightBlock(block);
+    });
+  });
+</script>
+
+  </body>
+</html>
+
